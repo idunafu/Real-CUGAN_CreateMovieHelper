@@ -380,31 +380,27 @@ def Combining_Picture():
     Print_Three_Reader()
 
 def Delete_Files():
-    def yes_no_input():
+    def yes_no_input() -> bool:
         while True:
-            print('Delete temp files?(yes/no)')
-            choice = input('作成時に出たファイルを削除しますか？(yes/no)').lower()
+            choice = input('Delete temp files?(yes/no): ').lower()
             if choice in ['y', 'ye', 'yes']:
                 return True
-            elif choice in ['n','no']:
+            elif choice in ['n', 'no']:
                 return False
+            else:
+                print("Please enter 'yes' or 'no'.")
 
-    ask_delete = yes_no_input()
-    if bool(ask_delete) == True:
+    ask_delete: bool = yes_no_input()
+    if ask_delete == True:
         shutil.rmtree(input_f)
         shutil.rmtree(output_f)
         if(os.path.isfile(basename_without_ext + '_music.wav')):
             os.remove(basename_without_ext + '_music.wav')
-    elif bool(ask_delete) == False:
+    else:
         print('Cancel delete files.')
         print('ファイルの削除を行いません。')
-    elif ask_delete == 0:
-        print('Incorrect input and cancel delete files.')
-        print('不正な値です。ファイルの削除を行いません。')
-    else:
-        print('Incorrect input and cancel delete files.')
-        print('不正な値です。ファイルの削除を行いません。')
-
+        
+    '''
 def is_CombineMode(Config_CombineOnlyMode : bool) -> bool:
     # 連番連結モードか否か。Configで読み取って最初の動作を変更。
     if Config_CombineOnlyMode == True:
@@ -415,6 +411,7 @@ def is_CombineMode(Config_CombineOnlyMode : bool) -> bool:
         print('Config.CombineOnly-Mode : Error : please set True or False.')
         print('Config.CombineOnly-Mode : Setted Disable CombineOnly-Mode.')
         return False
+    '''
 
 def Normal_Mode():
     Make_Files()
@@ -449,7 +446,7 @@ def Combine_Only_Mode():
 
 def Main():
     Import_config(config)
-    if is_CombineMode(CombineOnlyMode):
+    if CombineOnlyMode == True:
         Combine_Only_Mode()
     else:
         Normal_Mode()
