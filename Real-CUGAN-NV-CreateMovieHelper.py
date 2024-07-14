@@ -37,7 +37,8 @@ class Models:
         self.level = level
 
 # オブジェクト生成
-no_denoise = Models('no-denoise', '-1')
+no_denoise = Models('no-denoise', '0')
+conservative = Models('conservative mode', '-1')
 denoise1x = Models('denoise level 1', '1')
 denoise2x = Models('denoise level 2', '2')
 denoise3x = Models('denoise level 3', '3')
@@ -91,36 +92,42 @@ def DialogForModel(DialogForUseModel : bool = True):
             DenoiseModel = denoise2x
         elif int(ModelNameNum) == 4:
             DenoiseModel = denoise3x
+        elif int(ModelNameNum) == 0:
+            DenoiseModel = conservative
         else:
             print('FatalError! You must select Denoise model choose between 1 and 4 with integer.')
             input('エラー！1から4の整数でデノイズレベルを指定してください！')
             sys.exit()
         return DenoiseModel
 
-    def verifyScaleSize(ScaleSize: int = 2):
-        if not int(ScaleSize) <= 4:
+    def verifyScaleSize(ScaleSize: int):
+        if not (int(ScaleSize) <= 4 and int(ScaleSize) >= 2):
             print("Fetal Error! You must select Denoise model choose between 2 and 4 with integer.")
             input("エラー！2から4の整数で倍率を指定してください！")
             sys.exit()
         else:
             return
+        
+    def verifyModelNameNum(ModelNameNum: int, ScaleSize: str, variation: str ='se'):
+        if ScaleSize == '2' and variation == 'se':
+            if not (int(ModelNameNum) <= 4 and int(ModelNameNum) >= 0):
+                print('FatalError! You must select Denoise model choose between 0 and 4 with integer.')
+                input('エラー！0から4の整数でデノイズレベルを指定してください！')
+                sys.exit()
+            else:
+                return
+        else:
+            if not (int(ModelNameNum) == 0 or int(ModelNameNum)== 1 or int(ModelNameNum)== 3):
+                print('FatalError! You must select Denoise model choose 0, 1, 3.')
+                input('エラー！0,1,3でデノイズレベルを指定してください！')
+                sys.exit()
+            else:
+                return
                 
     if DialogForUseModel == True:
+        # 先に倍率を選択
         print('☆Starting with dialog mode...')
         print('☆対話形式による処理を開始します。')
-        print('+==============================+')
-        print('+// Denoise Level //+')
-        print('+// Notice : Default is no-denoise. //+')
-        print(' 1) ' +  no_denoise.name)
-        print(' 2) ' +  denoise1x.name)
-        print(' 3) ' +  denoise2x.name)
-        print(' 4) ' +  denoise3x.name)
-        print('+==============================+')
-
-        print('What do you want to use remove noise model? Select one from upper menu.')
-        ModelNameNum = input('どのデノイズモデルを使用しますか？上記より選択してください。')
-
-        Print_Three_Reader()
         print('+==============================+')
         print('+// Scale Size //+')
         print(' 2)  x2 upscale')
@@ -130,9 +137,46 @@ def DialogForModel(DialogForUseModel : bool = True):
 
         print('Select scale size what you want to from upper menu.')
         ScaleSize = input('倍率を上記から指定してください。')
-
-        DenoiseModel = convertDenoiseModel(ModelNameNum)
         verifyScaleSize(ScaleSize)
+           
+        Print_Three_Reader()
+        
+        print('+==============================+')
+        print('+// Denoise Level //+')
+        print('+// Notice : Default is no-denoise. //+')
+        # upscale 2x -> conservative, no-denoise, denoise1x, denoise2x, denoise3x
+        # upscale 3x -> conservative, no-denoise, denoise3x
+        # upscale 4x -> conservative, no-denoise, denoise3x
+        match ScaleSize:
+            case '2':
+                print(' 0) ' +  conservative.name)
+                print(' 1) ' +  no_denoise.name)
+                print(' 2) ' +  denoise1x.name)
+                print(' 3) ' +  denoise2x.name)
+                print(' 4) ' +  denoise3x.name)
+                print('+==============================+')
+                print('What do you want to use remove noise model? Select one from upper menu.')
+                ModelNameNum = input('どのデノイズモデルを使用しますか？上記より選択してください。')
+            case '3':
+                print(' 0) ' +  conservative.name)
+                print(' 1) ' +  no_denoise.name)
+                print(' 3) ' +  denoise3x.name)
+                print('+==============================+')
+                print('What do you want to use remove noise model? Select one from upper menu.')
+                ModelNameNum = input('どのデノイズモデルを使用しますか？上記より選択してください。')
+            case '4':
+                print(' 0) ' +  conservative.name)
+                print(' 1) ' +  no_denoise.name)
+                print(' 3) ' +  denoise3x.name)
+                print('+==============================+')
+                print('What do you want to use remove noise model? Select one from upper menu.')
+                ModelNameNum = input('どのデノイズモデルを使用しますか？上記より選択してください。')
+        
+
+        
+        verifyModelNameNum(int(ModelNameNum), ScaleSize, 'se')
+        DenoiseModel = convertDenoiseModel(ModelNameNum)
+        
 
         print('Selected noise model : ' + str(DenoiseModel.name) + '.')
         print('Selected scale size : ' + str(ScaleSize) + 'x .')
