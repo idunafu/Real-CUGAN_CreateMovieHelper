@@ -74,13 +74,13 @@ def Print_Three_Reader():
     print('.')
     print('.')
 
-def DialogForModel(DialogForUseModel : bool):
+def DialogForModel(DialogForUseModel : bool = True):
     global DenoiseModel,ScaleSize
     DenoiseModel = ''
-    ScaleSize =  0
-    ModelNameNum =  0
+    ScaleSize =  2
+    ModelNameNum =  1
 
-    def ConvartDenoiseModel(ModelNameNum):
+    def ConvartDenoiseModel(ModelNameNum: int = 1):
         if int(ModelNameNum) == 1:
             DenoiseModel = no_denoise
         elif int(ModelNameNum) == 2:
@@ -95,7 +95,7 @@ def DialogForModel(DialogForUseModel : bool):
             sys.exit()
         return DenoiseModel
 
-    def verifyScaleSize(ScaleSize):
+    def verifyScaleSize(ScaleSize: int = 2):
         if not int(ScaleSize) <= 4:
             print("Fetal Error! You must select Denoise model choose between 2 and 4 with integer.")
             input("エラー！2から4の整数で倍率を指定してください！")
