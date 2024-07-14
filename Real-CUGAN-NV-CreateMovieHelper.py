@@ -52,10 +52,10 @@ def Capture_fps(file):
 # 外部のffprobeを使用したfpsの読み取り。
 def Capture_fps(file):
     if not os.path.isfile('ffprobe.exe'):
-        print('＋＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＋')
+        print('+========!Alert!============!Alert!=======+')
         print('Missing ffprobe.exe on directory under CUGAN exe file. You will probably get error if you goes on.')
         print('exeファイル直下にffprobe.exeが見当たりません。用意しないと、予期せぬアクシデントが起きます。')
-        input('＋＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＋')
+        input('+========!Alert!============!Alert!=======+')
     global fps
     ff = ffmpy.FFprobe(
         global_options='-of json -show_streams -select_streams v',
@@ -76,11 +76,11 @@ def Print_Three_Reader():
 
 def DialogForModel(DialogForUseModel : bool = True):
     global DenoiseModel,ScaleSize
-    DenoiseModel = ''
+    DenoiseModel = 'no_denoise'
     ScaleSize =  2
     ModelNameNum =  1
 
-    def ConvartDenoiseModel(ModelNameNum: int = 1):
+    def convertDenoiseModel(ModelNameNum: int = 1):
         if int(ModelNameNum) == 1:
             DenoiseModel = no_denoise
         elif int(ModelNameNum) == 2:
@@ -106,30 +106,30 @@ def DialogForModel(DialogForUseModel : bool = True):
     if DialogForUseModel == True:
         print('☆Starting with dialog mode...')
         print('☆対話形式による処理を開始します。')
-        print('+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝+')
+        print('+==============================+')
         print('+// Denoise Level //+')
         print('+// Notice : Default is no-denoise. //+')
         print(' 1) ' +  no_denoise.name)
         print(' 2) ' +  denoise1x.name)
         print(' 3) ' +  denoise2x.name)
         print(' 4) ' +  denoise3x.name)
-        print('+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝+')
+        print('+==============================+')
 
         print('What do you want to use remove noise model? Select one from upper menu.')
         ModelNameNum = input('どのデノイズモデルを使用しますか？上記より選択してください。')
 
         Print_Three_Reader()
-        print('+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+        print('+==============================+')
         print('+// Scale Size //+')
         print(' 2)  x2 upscale')
         print(' 3)  x3 upscale')
         print(' 4)  x4 upscale')
-        print('+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+        print('+==============================+')
 
         print('Select scale size what you want to from upper menu.')
         ScaleSize = input('倍率を上記から指定してください。')
 
-        DenoiseModel = ConvartDenoiseModel(ModelNameNum)
+        DenoiseModel = convertDenoiseModel(ModelNameNum)
         verifyScaleSize(ScaleSize)
 
         print('Selected noise model : ' + str(DenoiseModel.name) + '.')
@@ -142,11 +142,11 @@ def DialogForModel(DialogForUseModel : bool = True):
         print('☆Starting with Config mode instead of Dialog one.')
         print('☆対話を省略し、configファイルから読み取ります。')
         config = configparser.ConfigParser(comment_prefixes=';', allow_no_value=True)
-        config.read(config_path, encoding='SHIFTJIS')
+        config.read(config_path, encoding='utf-8')
         ModelNameNum = config.get('DEFAULT', 'UseModel')
         ScaleSize = config.get('DEFAULT', 'ScaleSize')
 
-        DenoiseModel = ConvartDenoiseModel(ModelNameNum)
+        DenoiseModel = convertDenoiseModel(ModelNameNum)
         verifyScaleSize(ScaleSize)
 
         print('Selected noise model : ' + str(DenoiseModel.name) + '.')
@@ -166,6 +166,12 @@ def Import_config(file):
     #  --- コンフィグ読み取り ---
     config = configparser.ConfigParser(comment_prefixes=';', allow_no_value=True)
     if not os.path.exists(file):
+        #if config file is not exists, stop the process
+        print('Config file is not exists. Please check the file is exists or not.')
+        print('Configファイルが存在しません。ファイルがあるか確認してください。')
+        input()
+        sys.exit()
+        '''
         print(str(file),'is created cuz it not exists on the directory.')
         print(str(file),'がないため、新規作成します。')
         config['DEFAULT'] = {
@@ -209,6 +215,7 @@ def Import_config(file):
         }
         with open(file, 'w') as file:
             config.write(file)
+        '''
 
     # 同じファイルパス上にあることを認識させる
     # ↓exe化の場合は、こちらを使用
@@ -216,7 +223,7 @@ def Import_config(file):
     # ↓pyの場合は、こちらを使用
     #path = os.path.join(os.path.dirname(__file__), 'config.ini')
     #　こちらは相対パスにて設定、config.iniはexe/pyファイルの直下
-    config.read(config_path, encoding='SHIFTJIS')
+    config.read(config_path, encoding='utf-8')
     Bitrate = config.get('DEFAULT', 'Bitrate')
     Codec = config.get('DEFAULT', 'Codec')
     Extention = config.get('DEFAULT', 'Extension')
@@ -250,21 +257,21 @@ def is_empty(dir_path: str) -> bool:
 # 前に作成した画像がある場合は警告
 def Alert_RemainingOldCreated():
     if is_empty(input_f + '/') == False:
-        print('＋＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＋')
+        print('+========!Alert!============!Alert!=======+')
         print('・Input folder has still some files. Remove all of them otherwise you could have get some bug.')
         print('・Nevertheless if you goes on, please press any key.')
         print('・前回の連番作成した連番画像があります。バグが起きる可能性があるため、取り除いてください。')
         print('・それでも行う場合はなにかキーを押すと作業に入ります。')
-        print('＋Notice : If you got error when combine pictures, I strongly recommend turn to True CombineOnly-Mode in Config.ini once.＋')
-        print('＋通知 : もし画像連結で不具合が発生し、動画が作れなかったのであれば、一度Config.iniでCombineOnly-ModeをTrueにし、実行することを強くお勧めします。＋')
-        input('＋＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＋')
+        print('+Notice : If you got error when combine pictures, I strongly recommend turn to True CombineOnly-Mode in Config.ini once.+')
+        print('+通知 : もし画像連結で不具合が発生し、動画が作れなかったのであれば、一度Config.iniでCombineOnly-ModeをTrueにし、実行することを強くお勧めします。+')
+        input('+========!Alert!============!Alert!=======+')
 
 # exeファイルを起動したあとのcmd画面にD&Dをしたファイルを読み取り
 def Filein():
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Please Drag and Drop on the screen your file.')
     print('・ファイルを画面上にドラッグアンドドロップしてください。')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     global filename
     global basename
     global basename_without_ext
@@ -278,84 +285,84 @@ def Filein():
 
 # D&Dした動画を入力、png連番を「input_frames」内に作成。
 def Make_Video_to_Consecutive_Pictures():
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Creating consecutive pictures of original video…')
     print('・動画の連番を作成しています…')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
     cmd_text = 'ffmpeg -i ' + basename + ' -qscale:v 1 -qmin 1 -qmax 1 -vsync 0 -vcodec png .\input_frames\%08d.png'
     print(cmd_text)
     subprocess.call(cmd_text, shell=True)
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Finished create consecutive pictures of original video.')
     print('・動画の連番を終了しました。')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
 
 # うまく作れていない場合は警告文
 def Check_Consecutive_Pictures():
        if not is_empty(input_f + '/') == False:
-            print('＋＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＋')
+            print('+========!Alert!============!Alert!=======+')
             print('・It seems something wrong. If your files has 2 byte or special characters, remove it and try again.')
             print('・And you must put your file directory under the folder of CUGAN exe file.')
             print('・処理がうまくできていません。動画名にスペースや特殊文字を使用していませんか？アンダーバーなどで代用するようにしてください。')
             print('・また、使用するファイルはexe直下である必要があります。')
-            input('＋＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＝＝＝＝＝!Alert!＝＝＝＝＝＝＝＋')
+            input('+========!Alert!============!Alert!=======+')
             sys.exit()
 
 def SuperResolution_exe():
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Running Super-resolution process with CUGAN…')
     print('・超解像処理を実行します…')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
 
     cmd_text = 'realcugan-ncnn-vulkan.exe -i input_frames/ -o output_frames/ -n ' + DenoiseModel.level + ' -s ' + ScaleSize + '-f ' + Extention + ' -c' + SyncGapMode + TTA_Mode
     subprocess.call(cmd_text, shell=True)
 
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Finished Super-resolution process')
     print('・超解像処理を終了しました。')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
 
 def Combining_Picture():
     Normal = 'ffmpeg -framerate ' + fps + ' -i .\output_frames\%08d.png -i "' + basename + '" -map 0:v:0 -map 1:a:0 -strict -2 -vcodec ' + Codec + ' -acodec copy -b:v ' + Bitrate + ' -pix_fmt ' + ChromaSubsampling + ' -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r ' + fps + ' "'+ basename_without_ext +'_enhanced.mp4"'
     No_Music = 'ffmpeg -framerate ' + fps + ' -i .\output_frames\%08d.png -i "' + basename + '" -vcodec ' + Codec + ' -b:v ' + Bitrate + ' -pix_fmt ' + ChromaSubsampling + ' -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r ' + fps + ' "'+ basename_without_ext +'_enhanced_nomusic.mp4"'
     Music_MP3 = 'ffmpeg -framerate ' + fps + ' -i .\output_frames\%08d.png -i "' + basename + '" -map 0:v:0 -map 1:a:0 -strict -2 -vcodec ' + Codec + ' -ab 320k -acodec libmp3lame -b:v ' + Bitrate + ' -pix_fmt ' + ChromaSubsampling + ' -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r ' + fps + ' "'+ basename_without_ext +'_enhanced_fixed.mp4"'
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Combining output pictures…')
     print('・連番の結合を実行します…')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
 
     # 最初の処理。動画の音声を連番動画に入れ込む。
     cmd_text = Normal
     subprocess.call(cmd_text, shell=True)
 
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Checking the phase is finished correctly')
     print('・連番の結合が正しく終えたかチェックします…')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
 
     enhanced_name = basename_without_ext + '_enhanced.mp4'
     if not os.path.isfile(enhanced_name):
         # ファイルが無い場合。音声が無い場合にこの処理となり、音声オフで出力する。
-        print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+        print('+==============================+')
         print('・Failed create movie. Retry Combining output pictures with safe mode…')
         print('・失敗を確認。再処理を実行…')
-        print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+        print('+==============================+')
         Print_Three_Reader()
 
         cmd_text = No_Music
         subprocess.call(cmd_text, shell=True)
 
     elif os.path.getsize(enhanced_name) == 0:
-            print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+            print('+==============================+')
             print('・Failed create movie. Retry Combining output pictures with safe mode…')
             print('・失敗を確認。再処理を実行…')
-            print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+            print('+==============================+')
             Print_Three_Reader()
 
             # 再処理。音声をmp3で出力をする。
@@ -366,10 +373,10 @@ def Combining_Picture():
         print('・Checked it correctly')
         print('・正常に処理したことを確認しました。')
 
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Finished combine picture to create movie.')
     print('・連番の結合を終了しました。')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
 
 def Delete_Files():
@@ -426,10 +433,10 @@ def Normal_Mode():
     input()
 
 def Combine_Only_Mode():
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     print('・Activated Combine Only Mode.')
     print('・連番の連結のみを行います。')
-    print('＋＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＋')
+    print('+==============================+')
     Print_Three_Reader()
     Filein()
     Capture_fps(basename)
