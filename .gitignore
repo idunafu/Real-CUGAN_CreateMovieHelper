@@ -131,3 +131,11 @@ dmypy.json
 *.exe
 input_frames/
 output_frames/
+model-nose/
+model-pro/
+model-se/
+*.dll
+*.bin
+*.param
+*.mkv
+*.mp4

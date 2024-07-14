@@ -18,8 +18,10 @@ import shutil
 import sys
 import ffmpy
 import json
+from pathlib import Path
 
 #from cv2 import cv2
+sys.stdin.reconfigure(encoding='utf-8')
 
 #  --- 変数定義 ---
 input_f = 'input_frames'
@@ -275,11 +277,16 @@ def Filein():
     global filename
     global basename
     global basename_without_ext
-    filename = input()
+    input_path = input().strip().strip('"').strip("'")
+    file_path = Path(input_path)
+    #filename = input()
+    filename = str(file_path.resolve())
     print('Debug:Full pass is:' + filename)
-    basename = os.path.basename(filename)
+    #basename = os.path.basename(filename)
+    basename = file_path.name
     print('Debug:basename is:', basename)
-    basename_without_ext = os.path.splitext(os.path.basename(filename))[0]
+    #basename_without_ext = os.path.splitext(os.path.basename(filename))[0]
+    basename_without_ext = file_path.stem
     Print_Three_Reader()
     return filename, basename, basename_without_ext
 
@@ -290,7 +297,7 @@ def Make_Video_to_Consecutive_Pictures():
     print('・動画の連番を作成しています…')
     print('+==============================+')
     Print_Three_Reader()
-    cmd_text = 'ffmpeg -i ' + basename + ' -qscale:v 1 -qmin 1 -qmax 1 -vsync 0 -vcodec png .\input_frames\%08d.png'
+    cmd_text = f'ffmpeg -i "{basename}" -qscale:v 1 -qmin 1 -qmax 1 -vsync 0 -vcodec png .\input_frames\%08d.png'
     print(cmd_text)
     subprocess.call(cmd_text, shell=True)
     print('+==============================+')
@@ -327,9 +334,9 @@ def SuperResolution_exe():
     Print_Three_Reader()
 
 def Combining_Picture():
-    Normal = 'ffmpeg -framerate ' + fps + ' -i .\output_frames\%08d.png -i "' + basename + '" -map 0:v:0 -map 1:a:0 -strict -2 -vcodec ' + Codec + ' -acodec copy -b:v ' + Bitrate + ' -pix_fmt ' + ChromaSubsampling + ' -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r ' + fps + ' "'+ basename_without_ext +'_enhanced.mp4"'
-    No_Music = 'ffmpeg -framerate ' + fps + ' -i .\output_frames\%08d.png -i "' + basename + '" -vcodec ' + Codec + ' -b:v ' + Bitrate + ' -pix_fmt ' + ChromaSubsampling + ' -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r ' + fps + ' "'+ basename_without_ext +'_enhanced_nomusic.mp4"'
-    Music_MP3 = 'ffmpeg -framerate ' + fps + ' -i .\output_frames\%08d.png -i "' + basename + '" -map 0:v:0 -map 1:a:0 -strict -2 -vcodec ' + Codec + ' -ab 320k -acodec libmp3lame -b:v ' + Bitrate + ' -pix_fmt ' + ChromaSubsampling + ' -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r ' + fps + ' "'+ basename_without_ext +'_enhanced_fixed.mp4"'
+    Normal = f'ffmpeg -framerate {fps} -i .\output_frames\%08d.png -i "{basename}" -map 0:v:0 -map 1:a:0 -strict -2 -vcodec {Codec} -acodec copy -b:v {Bitrate} -pix_fmt {ChromaSubsampling} -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r {fps} "{basename_without_ext}_enhanced.mp4"'
+    No_Music = f'ffmpeg -framerate {fps} -i .\output_frames\%08d.png -i "{basename}" -vcodec {Codec} -b:v {Bitrate} -pix_fmt {ChromaSubsampling} -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r {fps} "{basename_without_ext}_enhanced_nomusic.mp4"'
+    Music_MP3 = f'ffmpeg -framerate {fps} -i .\output_frames\%08d.png -i "{basename}" -map 0:v:0 -map 1:a:0 -strict -2 -vcodec {Codec} -ab 320k -acodec libmp3lame -b:v {Codec} -pix_fmt {ChromaSubsampling} -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 -r {fps} "{basename_without_ext}_enhanced_fixed.mp4"'
     print('+==============================+')
     print('・Combining output pictures…')
     print('・連番の結合を実行します…')
@@ -416,7 +423,7 @@ def is_CombineMode(Config_CombineOnlyMode : bool) -> bool:
 def Normal_Mode():
     Make_Files()
     Alert_RemainingOldCreated()
-    DialogForModel()
+    DialogForModel(DialogForUseModel)
     Filein()
     Capture_fps(basename)
     Make_Video_to_Consecutive_Pictures()
