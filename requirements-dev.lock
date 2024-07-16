@@ -11,3 +11,10 @@
 -e file:.
 ffmpy==0.3.2
     # via real-cugan-createmoviehelper
+nuitka==2.3.11
+    # via real-cugan-createmoviehelper
+ordered-set==4.1.0
+    # via nuitka
+zstandard==0.22.0
+    # via nuitka
+    # via real-cugan-createmoviehelper
