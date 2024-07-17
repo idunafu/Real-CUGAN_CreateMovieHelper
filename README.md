@@ -26,12 +26,16 @@ https://youtu.be/Q7RjPQU0-X8
 
 ## [現在の課題]
 
-## [再頒布について]
-このプログラムのGitHubのページを貼付いただければ、お好きに改変して再頒布を可能とします。
+## [Credit]
+Real-CUGAN ncnn Vulkan [link](https://github.com/nihui/realcugan-ncnn-vulkan) \
+Copyright (c) 2019 nihui \
+Released under the MIT license \
+https://opensource.org/license/mit \
 
-   <br>@file Real-CUGAN-NV-CreateMovieHelper
-   <br>@brief Real-CUGANで楽に動画化するためのものです。
-   <br>@author Aerin the Lion(aka. Lost History)
-   <br>@date 3.12.2022
+Real-CUGAN_CreateMovieHelper [link](https://github.com/Aerin-the-Lion/Real-CUGAN_CreateMovieHelper) \
+Copyright (c) 2022 Aerin the Lion(aka. Lost History) \
+Released under AGPL-3.0 license \
+https://opensource.org/license/agpl-v3 \
 
-※※※ツールの使用は自己責任でお願いいたします。※※※
+
+
