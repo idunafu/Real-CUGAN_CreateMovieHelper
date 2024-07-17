@@ -1,4 +1,4 @@
-# Real-CUGAN_CreateMovieHelper
+# Real-CUGAN_CreateMovieHelper-Fork
 
 forked from https://github.com/Aerin-the-Lion/Real-CUGAN_CreateMovieHelper
 Simply automation tool for Real-CUGAN.
