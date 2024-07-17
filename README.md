@@ -7,7 +7,8 @@ Simply automation tool for Real-CUGAN.
 
 - 起動しないバグなどいくつかのバグの修正
 - ファイル名に日本語やスペースが入っても大丈夫になった
-- exe化していないのでpythonの実行環境と[ffmpeg](https://www.gyan.dev/ffmpeg/builds/)が必要
+- デフォルトのコーデックはlibx264
+- (Optional)同梱のffmpegはEssentialなので必要ならfull版[ffmpeg](https://www.gyan.dev/ffmpeg/builds/)
 
 ## [どんなツール？]
 ○real-cugan-ncnn-vulkanの処理を簡単操作&自動で動画のアップコンバートを行えるようにするべく作成された補助ツール。
