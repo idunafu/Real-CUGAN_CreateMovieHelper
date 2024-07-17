@@ -20,8 +20,8 @@ Simply automation tool for Real-CUGAN.
 https://youtu.be/Q7RjPQU0-X8
 
 ## [必要なツール]
-<br>・FFmpeg(梱包済み)
-<br>・real-cugan-ncnn-vulkan(別途DLが必要)
+<br>・FFmpeg(同梱)
+<br>・real-cugan-ncnn-vulkan(同梱)
 <br>https://github.com/nihui/realcugan-ncnn-vulkan
 
 ## [現在の課題]
