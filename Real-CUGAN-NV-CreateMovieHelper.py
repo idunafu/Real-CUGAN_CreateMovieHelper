@@ -1,17 +1,5 @@
-'''
-
-    @file Real-CUGAN-NV-CreateMovieHelper
-    @brief Real-CUGANで楽に動画化するためのものです。
-    @author Aerin the Lion(aka. Lost History)
-    @date 3.12.2022
-
-'''
-
-# from signal import pause
-from operator import is_
-from re import L
 import subprocess
-from subprocess import Popen, PIPE
+from subprocess import PIPE
 import configparser
 import os
 import shutil
@@ -43,15 +31,6 @@ denoise1x = Models('denoise level 1', '1')
 denoise2x = Models('denoise level 2', '2')
 denoise3x = Models('denoise level 3', '3')
 
-'''
-# OpenCVを使用したfpsの読み取り。だが、簡単な使用にするには、exeが膨大になってしまうので、断念。
-# どのくらい大きくなるかというと、約300MB。ちょっと配布としては無理。体制的には、どちらもffprobeを使用しているので、これにこだわらなくてもOK
-def Capture_fps(file):
-    global fps
-    cap = cv2.VideoCapture(file)
-    fps = str(cap.get(cv2.CAP_PROP_FPS))
-    # print('動画のfpsは', cap.get(cv2.CAP_PROP_FPS))
-'''
 # 外部のffprobeを使用したfpsの読み取り。
 def Capture_fps(file):
     if not os.path.isfile('ffprobe.exe'):
@@ -96,14 +75,14 @@ def DialogForModel(DialogForUseModel : bool = True):
             DenoiseModel = conservative
         else:
             print('FatalError! You must select Denoise model choose between 1 and 4 with integer.')
-            input('エラー！1から4の整数でデノイズレベルを指定してください！')
+            input('エラー!1から4の整数でデノイズレベルを指定してください!')
             sys.exit()
         return DenoiseModel
 
     def verifyScaleSize(ScaleSize: int):
         if not (int(ScaleSize) <= 4 and int(ScaleSize) >= 2):
             print("Fetal Error! You must select Denoise model choose between 2 and 4 with integer.")
-            input("エラー！2から4の整数で倍率を指定してください！")
+            input("エラー!2から4の整数で倍率を指定してください!")
             sys.exit()
         else:
             return
@@ -112,22 +91,22 @@ def DialogForModel(DialogForUseModel : bool = True):
         if ScaleSize == '2' and variation == 'se':
             if not (int(ModelNameNum) <= 4 and int(ModelNameNum) >= 0):
                 print('FatalError! You must select Denoise model choose between 0 and 4 with integer.')
-                input('エラー！0から4の整数でデノイズレベルを指定してください！')
+                input('エラー!0から4の整数でデノイズレベルを指定してください!')
                 sys.exit()
             else:
                 return
         else:
             if not (int(ModelNameNum) == 0 or int(ModelNameNum)== 1 or int(ModelNameNum)== 3):
                 print('FatalError! You must select Denoise model choose 0, 1, 3.')
-                input('エラー！0,1,3でデノイズレベルを指定してください！')
+                input('エラー!0,1,3でデノイズレベルを指定してください!')
                 sys.exit()
             else:
                 return
                 
     if DialogForUseModel == True:
         # 先に倍率を選択
-        print('☆Starting with dialog mode...')
-        print('☆対話形式による処理を開始します。')
+        print('Starting with dialog mode...')
+        print('対話形式による処理を開始します。')
         print('+==============================+')
         print('+// Scale Size //+')
         print(' 2)  x2 upscale')
@@ -185,8 +164,8 @@ def DialogForModel(DialogForUseModel : bool = True):
         return DenoiseModel, ScaleSize
 
     else:
-        print('☆Starting with Config mode instead of Dialog one.')
-        print('☆対話を省略し、configファイルから読み取ります。')
+        print('Starting with Config mode instead of Dialog one.')
+        print('対話を省略し、configファイルから読み取ります。')
         config = configparser.ConfigParser(comment_prefixes=';', allow_no_value=True)
         config.read(config_path, encoding='utf-8')
         ModelNameNum = config.get('DEFAULT', 'UseModel')
@@ -217,51 +196,6 @@ def Import_config(file):
         print('Configファイルが存在しません。ファイルがあるか確認してください。')
         input()
         sys.exit()
-        '''
-        print(str(file),'is created cuz it not exists on the directory.')
-        print(str(file),'がないため、新規作成します。')
-        config['DEFAULT'] = {
-            'DialogForUseModel': 'True',
-            '; Default = True ; if you use config setting then switch to False.':'',
-            ';				  ; もしconfig.iniから読み取る場合は、Falseに切り替えてください。':'',
-            'Codec': 'hevc_nvenc',
-            '; Default = hevc_nvenc ; h264_nvenc, hevc_nvenc, libx264 ...etc':'',
-            'Bitrate': '200M',
-            '; Default = 200M ; This is max bitrate.  ; if you feels huge the value, decrease it.':'',
-            ';				  ; max bitrateのことです。; もし数字が大きいと感じた場合は、下げてください。':'',
-            'Extension': 'png',
-            '; Default = png ; png,jpg,webp':'',
-            '; --- !! These settings enables when DialogForUseModel is False !! ---':'',
-            '; --- !! これらの設定はDialogForUseModelがFalseの場合に有効化されます !! ---':'',
-            'UseModel': '1',
-            '; Default = 1 : no-denoise':'',
-            '; Models list on below for UseModel':'',
-            '; 1 : no-denoise 				(default)':'',
-            '; 2 : denoise1x':'',
-            '; 3 : denoise2x':'',
-            '; 4 : denoise3x':'',
-            'ScaleSize': '2',
-            '; Default = 2 ; Switch ScaleSize between 2 and 4 with integer.':'',
-            '				  ; 2から4の整数で倍数を切り替えてください。':'',
-            '; --- !! --------------------------------------------------------- !! ---':'',
-            'Chroma_Subsampling': 'yuv420p',
-            '; Default = yuv420p ; yuv420p, yuv444p..(or more... plz read FFmpeg official site.)':'',
-            ';                   ;                   (更に知りたい場合は、FFmpegの公式サイトを参照してください。)':'',
-            'SyncGapMode': '3',
-            '; Default = 3 ; Switch ScaleSize between 0 and 3 with integer.':'',
-            '				  ; 0から3の整数で倍数を切り替えてください。':'',
-            'TTA-Mode': 'False',
-            '; Default = False ; Switch if you want to use tta':'',
-            '				  ; True or False':'',
-            'CombineOnly-Mode': 'False',
-            '; Default = False ; Switch to True the setting when you got error or crashed combining pictures phase.':'',
-            '				   ; This mode will performs only combining them with created pictures in output_frames.':'',
-            '				   ; もしエラーが発生したり、連番を連結する際にクラッシュしてしまったら、この設定をTrueにしてください。':'',
-            '				   ; このモードはoutput_framesに入っている連番を使用し、連結工程のみ行います。':'',
-        }
-        with open(file, 'w') as file:
-            config.write(file)
-        '''
 
     # 同じファイルパス上にあることを認識させる
     # ↓exe化の場合は、こちらを使用
@@ -323,13 +257,10 @@ def Filein():
     global basename_without_ext
     input_path = input().strip().strip('"').strip("'")
     file_path = Path(input_path)
-    #filename = input()
     filename = str(file_path.resolve())
     print('Debug:Full pass is:' + filename)
-    #basename = os.path.basename(filename)
     basename = file_path.name
     print('Debug:basename is:', basename)
-    #basename_without_ext = os.path.splitext(os.path.basename(filename))[0]
     basename_without_ext = file_path.stem
     Print_Three_Reader()
     return filename, basename, basename_without_ext
@@ -451,19 +382,7 @@ def Delete_Files():
         print('Cancel delete files.')
         print('ファイルの削除を行いません。')
         
-    '''
-def is_CombineMode(Config_CombineOnlyMode : bool) -> bool:
-    # 連番連結モードか否か。Configで読み取って最初の動作を変更。
-    if Config_CombineOnlyMode == True:
-        return True
-    elif Config_CombineOnlyMode == False:
-        return False
-    else:
-        print('Config.CombineOnly-Mode : Error : please set True or False.')
-        print('Config.CombineOnly-Mode : Setted Disable CombineOnly-Mode.')
-        return False
-    '''
-
+        
 def Normal_Mode():
     Make_Files()
     Alert_RemainingOldCreated()
