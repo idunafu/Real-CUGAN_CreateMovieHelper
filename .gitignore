@@ -139,3 +139,5 @@ model-se/
 *.param
 *.mkv
 *.mp4
+
+.vscode/

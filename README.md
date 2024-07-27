@@ -3,6 +3,15 @@
 forked from https://github.com/Aerin-the-Lion/Real-CUGAN_CreateMovieHelper
 Simply automation tool for Real-CUGAN.
 
+## [お知らせ]
+このフォークの更新は終了しました。今後機能追加等のアップデートはしません。
+より高機能で様々なモデルが使え、マルチプラットフォームの画像・映像アップスケールソフト[chaiNNer](https://github.com/chaiNNer-org/chaiNNer)をお使いください。
+
+ChaiNNerで動画をアップスケールする例:
+![例](chaiNNer-Untitled-2024-7-27_16-24.png)
+
+NCNNノードでNCNN用の好きなモデル(Real-CUGAN、Real-ESRGANなど)を利用可能です。
+
 ## [Forkについて]
 
 - 起動しないバグなどいくつかのバグの修正
